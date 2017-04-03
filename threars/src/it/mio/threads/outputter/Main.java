@@ -1,11 +1,11 @@
 package it.mio.threads.outputter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
-	
-
 	private static Outputter out = new Outputter() {
-
 		@Override
 		public void println(String s) {
 			System.out.println(s);
@@ -15,22 +15,33 @@ public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
 		
-		CountingOutputterIntelligente outi = new CountingOutputterIntelligente(out);
+		CountingOutputterMoltoIntelligente outi = new CountingOutputterMoltoIntelligente(out);
 
-		//costruire 2 Mythread
-		MyThread myt = new MyThread("Thread1", 100, outi);
-		MyThread myt2 = new MyThread("Thread2", 100, outi);
+		
+		List<MyThread> mts = new ArrayList<MyThread>();
+	
+		
+		//costruire N Mythread
+		for(int i =0; i< 3; i++ ) {
+			MyThread myt = new MyThread("Thread"+i, 100, outi);
+			mts.add(myt);
+		}
+			
+					
+		List<Thread> ts = new ArrayList<>();
+		for(MyThread mt : mts) {
+			Thread t = new Thread(mt);
+			ts.add(t);
+		}
 
+		for(Thread t : ts) {
+			t.start();
+		}
+		
 
-		Thread t = new Thread(myt);
-		Thread t2 = new Thread(myt2);
-
-		t.start();
-		t2.start();
-
-
-		t.join();
-		t2.join();
+		for(Thread t : ts) {
+			t.join();
+		}
 
 		outi.flush();
 
